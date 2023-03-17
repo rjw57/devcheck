@@ -44,8 +44,3 @@ func (l *Logger) Failure(format string, a ...interface{}) {
 func (l *Logger) Bullet(format string, a ...interface{}) {
 	l.writeMessage(color.New(color.Reset), "-", format, a...)
 }
-
-func (l *Logger) Error(e error) {
-	// TODO
-}
-

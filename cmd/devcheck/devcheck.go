@@ -3,10 +3,15 @@ package main
 import dc "github.com/rjw57/devcheck/internal/devcheck"
 
 func main() {
+	versionCheck := dc.NewVersionCheck()
 	dockerCmdCheck := dc.NewCommandCheck("docker").WithInstallUrl("https://docs.docker.com/get-docker/")
 	gcloudCmdCheck := dc.NewCommandCheck("gcloud").WithInstallUrl("https://cloud.google.com/sdk/docs/install")
 
 	dc.NewCheckList(
+		dc.NewSectionCheck("Checking devcheck", dc.NewCheckList(
+			versionCheck,
+			dc.NewFreshnessCheck(versionCheck),
+		)),
 		dc.NewSectionCheck(
 			"Checking platform",
 			dc.NewPlatformCheck([]string{"linux", "darwin"}),

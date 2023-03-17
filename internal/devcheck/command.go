@@ -24,7 +24,6 @@ func (c *CommandCheck) Check(l *Logger) error {
 		if c.InstallUrl != "" {
 			l.Indented().Info("Install instructions: %v", c.InstallUrl)
 		}
-		l.Error(err)
 		return err
 	}
 	c.Path = path
