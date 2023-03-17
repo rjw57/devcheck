@@ -1,9 +1,9 @@
 package devcheck
 
 import (
-	"fmt"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os/exec"
@@ -11,11 +11,17 @@ import (
 )
 
 type GCloudCheck struct {
-	CommandCheck *CommandCheck
+	CommandCheck           *CommandCheck
+	RequiredIdentitySuffix string
 }
 
 func NewGCloudCheck(gcloudCommand *CommandCheck) *GCloudCheck {
 	return &GCloudCheck{CommandCheck: gcloudCommand}
+}
+
+func (c *GCloudCheck) WithRequiredIdentitySuffix(suffix string) *GCloudCheck {
+	c.RequiredIdentitySuffix = suffix
+	return c
 }
 
 func (c *GCloudCheck) gcloud(arg ...string) (string, error) {
@@ -83,8 +89,8 @@ func (c *GCloudCheck) Check(l *Logger) error {
 			errs = append(errs, err)
 		} else {
 			l.Success("Application default credentials identity: %v", app_default_email)
-			if !strings.HasSuffix(app_default_email, "@cam.ac.uk") {
-				l.Failure("Application default credentials identity is not an @cam.ac.uk email address")
+			if !strings.HasSuffix(app_default_email, c.RequiredIdentitySuffix) {
+				l.Failure("Application default credentials identity does not end in '%v'", c.RequiredIdentitySuffix)
 				l.Indented().Info("Try using the 'gcloud auth application-default login' command")
 			}
 		}
@@ -104,8 +110,8 @@ func (c *GCloudCheck) Check(l *Logger) error {
 			errs = append(errs, err)
 		} else {
 			l.Success("SDK credentials identity: %v", auth_email)
-			if !strings.HasSuffix(auth_email, "@cam.ac.uk") {
-				l.Failure("SDK credentials identity is not an @cam.ac.uk email address")
+			if !strings.HasSuffix(auth_email, c.RequiredIdentitySuffix) {
+				l.Failure("SDK credentials identity does not end in '%v'", c.RequiredIdentitySuffix)
 				l.Indented().Info("Try using the 'gcloud auth login' command")
 			}
 		}

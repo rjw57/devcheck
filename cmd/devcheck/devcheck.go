@@ -26,7 +26,7 @@ func main() {
 		dc.NewSectionCheck("Checking Docker", dc.NewDockerCheck(dockerCmdCheck)),
 		dc.NewSectionCheck("Checking SSH", dc.NewSSHCheck(
 			"git@github.com",
-			"git@gitlab.developers.cam.ac.uk",
+			"git@gitlab.com",
 		)),
 		dc.NewSectionCheck("Checking Google Cloud SDK", dc.NewGCloudCheck(gcloudCmdCheck)),
 	).Check(dc.NewLogger())
