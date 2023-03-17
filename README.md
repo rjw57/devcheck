@@ -1,3 +1,3 @@
 # Developer check tool
 
-`go run cmd/devcheck/devcheck.go`
+`go run cmd/devcheck/`
