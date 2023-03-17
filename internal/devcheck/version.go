@@ -15,11 +15,11 @@ func NewVersionCheck() *VersionCheck {
 
 func (c *VersionCheck) Check(l *Logger) error {
 	if c.Version == "" {
-		l.Failure("devcheck version unknown")
+		l.Failure("Could not determine devcheck version")
 		return fmt.Errorf("Could not determine devcheck version")
 	}
 
-	l.Info("devcheck is version %v", c.Version)
+	l.Success("Determined devcheck version: %v", c.Version)
 	return nil
 }
 
