@@ -20,7 +20,7 @@ func main() {
 			dockerCmdCheck,
 			gcloudCmdCheck,
 			dc.NewCommandCheck("python3").WithInstallUrl("https://wiki.python.org/moin/BeginnersGuide/Download"),
-			dc.NewCommandCheck("git").WithInstallUrl("https://wiki.python.org/moin/BeginnersGuide/Download"),
+			dc.NewCommandCheck("git").WithInstallUrl("https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"),
 			dc.NewCommandCheck("ssh"),
 		)),
 		dc.NewSectionCheck("Checking Docker", dc.NewDockerCheck(dockerCmdCheck)),
