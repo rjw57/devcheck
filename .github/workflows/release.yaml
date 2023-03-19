@@ -26,4 +26,5 @@ jobs:
         goversion: "1.20"
         project_path: "./cmd/devcheck"
         binary_name: "devcheck"
+        ldflags: "-X 'github.com/${{ github.repository }}/internal/devcheck.releaseRefName=${{ github.ref_name }}'"
         extra_files: LICENSE.txt README.md

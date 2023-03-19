@@ -2,7 +2,6 @@ package devcheck
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/go-github/v50/github"
 )
@@ -21,11 +20,6 @@ func NewFreshnessCheck(c *VersionCheck) *FreshnessCheck {
 }
 
 func (c *FreshnessCheck) Check(l *Logger) error {
-	if c.VersionCheck.Version == "" {
-		l.Warning("Skipping freshness check because devcheck version unknown")
-		return nil
-	}
-
 	ctx := context.Background()
 	client := github.NewClient(nil)
 	release, _, err := client.Repositories.GetLatestRelease(ctx, repoOwner, repoName)
@@ -35,24 +29,36 @@ func (c *FreshnessCheck) Check(l *Logger) error {
 		return err
 	}
 
-	ref, _, err := client.Git.GetRef(ctx, repoOwner, repoName, "refs/tags/"+*release.TagName)
-	if err != nil {
-		l.Failure(
-			"Could not get SHA for latest release '%v' from https://github.com/%v/%v: %v",
-			*release.TagName, repoOwner, repoName, err)
-		return err
-	}
+	if c.VersionCheck.ReleaseRefName == "" {
+		l.Warning("Skipping freshness check because this is not a released version")
+	} else {
+		if *release.TagName != c.VersionCheck.ReleaseRefName {
+			l.Warning("The most recent release is '%v'", *release.TagName)
+			l.Indented().Info(
+				"Download the most recent release at: %v", *release.HTMLURL)
+		} else {
+			l.Success("This is the most recent release")
+		}
 
-	if *ref.Object.SHA != c.VersionCheck.Version {
-		l.Failure(
-			"Most recent release of devcheck at https://github.com/%v/%v is '%v'",
-			repoOwner, repoName, *release.TagName)
-		l.Indented().Info("Download the most recent release at: %v", *release.HTMLURL)
-		return fmt.Errorf("most recent devcheck is version %v", *release.TagName)
-	}
+		if c.VersionCheck.Version == "" {
+			l.Warning("Skipping version check because devcheck version unknown")
+		} else {
+			ref, _, err := client.Git.GetRef(
+				ctx, repoOwner, repoName, "refs/tags/"+c.VersionCheck.ReleaseRefName)
+			if err != nil {
+				l.Failure(
+					"Could not get SHA for release '%v' from https://github.com/%v/%v: %v",
+					c.VersionCheck.ReleaseRefName, repoOwner, repoName, err)
+				return err
+			}
 
-	l.Success(
-		"Version matches most recent version '%v' from https://github.com/%v/%v",
-		*release.TagName, repoOwner, repoName)
+			if *ref.Object.SHA != c.VersionCheck.Version {
+				l.Failure("Commit hash for release '%v' should be %v",
+					c.VersionCheck.ReleaseRefName, *ref.Object.SHA)
+			} else {
+				l.Success("Commit hash matches release tag")
+			}
+		}
+	}
 	return nil
 }
