@@ -32,9 +32,6 @@ func main() {
 			"git@gitlab.com",
 			"git@gitlab.developers.cam.ac.uk",
 		)),
-		dc.NewSectionCheck("Checking Google Cloud SDK",
-			dc.NewGCloudCheck(gcloudCmdCheck).
-				WithRequiredIdentitySuffix("gcloudadmin.g.apps.cam.ac.uk")
-		),
+		dc.NewSectionCheck("Checking Google Cloud SDK", dc.NewGCloudCheck(gcloudCmdCheck).WithRequiredIdentitySuffix("gcloudadmin.g.apps.cam.ac.uk")),
 	).Check(dc.NewLogger())
 }
