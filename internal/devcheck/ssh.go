@@ -75,7 +75,7 @@ func (s *SSHCheck) Check(l *Logger) error {
 			l.Failure("%v: login failed: %v", c, err)
 			l.Indented().Info("Check that your key has been added to the SSH agent via ssh-add")
 			errs = append(errs, err)
-			break
+			continue
 		}
 		l.Success("%v: login succeeded", c)
 		sshc.Close()
